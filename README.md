@@ -1,7 +1,7 @@
 # enb-api
 ENBSeries API, done in the style of TrueDirectionalMovement and other SKSE APIs
 
-Plugin should work for any xSE version, but only SKSE was tested
+API should work for any xSE version, but only SKSE was tested
 
 # Accessing the API
 
