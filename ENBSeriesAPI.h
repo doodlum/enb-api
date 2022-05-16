@@ -6,6 +6,7 @@ using namespace ENB_SDK;
 
 namespace ENB_API
 {
+	#include <AntTweakBar.h>
 
 	// Available ENBSeries SDK versions
 	enum class SDKVersion : long
@@ -73,7 +74,6 @@ namespace ENB_API
 			return reinterpret_cast<_ENBGetGameIdentifier>(GetProcAddress(enbmodule, "ENBGetGameIdentifier"))();
 		}
 
-
 		/// <summary>
 		/// Adds a callback function which is executed by ENBSeries at certain moments. This helps to bypass potential bugs and may increase performance. 
 		/// </summary> 
@@ -81,7 +81,6 @@ namespace ENB_API
 		{
 			reinterpret_cast<_ENBSetCallbackFunction>(GetProcAddress(enbmodule, "ENBSetCallbackFunction"))(a_func);
 		}
-
 
 		/// <summary> 
 		/// Get the value of a parameter.<br/>
@@ -92,6 +91,10 @@ namespace ENB_API
 		bool GetParameter(char* a_filename, char* a_category, char* a_keyname, ENBParameter* a_outparam)
 		{
 			return reinterpret_cast<_ENBGetParameter>(GetProcAddress(enbmodule, "ENBGetParameter"))(a_filename, a_category, a_keyname, a_outparam);
+		}
+		bool GetParameter(const char* a_filename, const char* a_category, const char* a_keyname, ENBParameter* a_outparam)
+		{
+			return reinterpret_cast<_ENBGetParameterA>(GetProcAddress(enbmodule, "ENBGetParameter"))(a_filename, a_category, a_keyname, a_outparam);
 		}
 
 		/// <summary>
@@ -107,6 +110,10 @@ namespace ENB_API
 		bool SetParameter(char* a_filename, char* a_category, char* a_keyname, ENBParameter* a_inparam)
 		{
 			return reinterpret_cast<_ENBSetParameter>(GetProcAddress(enbmodule, "ENBSetParameter"))(a_filename, a_category, a_keyname, a_inparam);
+		}
+		bool SetParameter(char* a_filename, const char* a_category, const char* a_keyname, ENBParameter* a_inparam)
+		{
+			return reinterpret_cast<_ENBSetParameterA>(GetProcAddress(enbmodule, "ENBSetParameter"))(a_filename, a_category, a_keyname, a_inparam);
 		}
 
 
@@ -139,6 +146,96 @@ namespace ENB_API
 			return reinterpret_cast<_ENBStateType>(GetProcAddress(enbmodule, "ENBGetState"))(state);
 		}
 
+
+	};
+
+	class ENBSDKALT1001 : public ENBSDK1001
+	{
+	public:
+
+		typedef TwBar*      (*_TwNewBar)(const char* barName);
+		typedef int			(*_TwDeleteBar)(TwBar* bar);
+		typedef const char* (*_TwGetBarName)(const TwBar* bar);
+		typedef TwBar*		(*_TwGetBarByName)(const char* barName);
+		typedef int			(*_TwRefreshBar)(TwBar* bar);
+
+		TwBar* TwNewBar(const char* barName)
+		{
+			return reinterpret_cast<_TwNewBar>(GetProcAddress(enbmodule, "TwNewBar"))(barName);
+		}
+
+		int TwDeleteBar(TwBar* bar)
+		{
+			return reinterpret_cast<_TwDeleteBar>(GetProcAddress(enbmodule, "TwDeleteBar"))(bar);
+		}
+
+		TwBar* TwGetBarByName(const char* barName)
+		{
+			return reinterpret_cast<_TwGetBarByName>(GetProcAddress(enbmodule, "TwGetBarByName"))(barName);
+		}
+
+		int TwRefreshBar(TwBar* bar)
+		{
+			return reinterpret_cast<_TwRefreshBar>(GetProcAddress(enbmodule, "TwRefreshBar"))(bar);
+		}
+
+
+		typedef int (*_TwAddVarRW)(TwBar* bar, const char* name, TwType type, void* var, const char* def);
+		typedef int (*_TwAddVarRO)(TwBar* bar, const char* name, TwType type, const void* var, const char* def);
+		typedef int (*_TwAddVarCB)(TwBar* bar, const char* name, TwType type, TwSetVarCallback setCallback, TwGetVarCallback getCallback, void* clientData, const char* def);
+		typedef int (*_TwAddButton)(TwBar* bar, const char* name, TwButtonCallback callback, void* clientData, const char* def);
+		typedef int (*_TwAddSeparator)(TwBar* bar, const char* name, const char* def);
+		typedef int (*_TwRemoveVar)(TwBar* bar, const char* name);
+		typedef int (*_TwRemoveAllVars)(TwBar* bar);
+
+		int TwAddVarRW(TwBar* bar, const char* name, TwType type, void* var, const char* def)
+		{
+			return reinterpret_cast<_TwAddVarRW>(GetProcAddress(enbmodule, "TwAddVarRW"))(bar, name, type, var, def);
+		}
+
+		int TwAddVarRO(TwBar* bar, const char* name, TwType type, const void* var, const char* def)
+		{
+			return reinterpret_cast<_TwAddVarRO>(GetProcAddress(enbmodule, "TwAddVarRO"))(bar, name, type, var, def);
+		}
+
+		int TwAddVarCB(TwBar* bar, const char* name, TwType type, TwSetVarCallback setCallback, TwGetVarCallback getCallback, void* clientData, const char* def)
+		{
+			return reinterpret_cast<_TwAddVarCB>(GetProcAddress(enbmodule, "TwAddVarCB"))(bar, name, type, setCallback, getCallback, clientData, def);
+		}
+
+		int TwAddButton(TwBar* bar, const char* name, TwButtonCallback callback, void* clientData, const char* def)
+		{
+			return reinterpret_cast<_TwAddButton>(GetProcAddress(enbmodule, "TwAddButton"))(bar, name, callback, clientData, def);
+		}
+
+		int TwAddSeparator(TwBar* bar, const char* name, const char* def)
+		{
+			return reinterpret_cast<_TwAddSeparator>(GetProcAddress(enbmodule, "TwAddVarRO"))(bar, name, def);
+		}
+
+		int TwRemoveVar(TwBar* bar, const char* name)
+		{
+			return reinterpret_cast<_TwRemoveVar>(GetProcAddress(enbmodule, "TwRemoveVar"))(bar, name);
+		}
+
+		int TwRemoveAllVars(TwBar* bar)
+		{
+			return reinterpret_cast<_TwRemoveAllVars>(GetProcAddress(enbmodule, "TwRemoveAllVars"))(bar);
+		}
+
+
+		typedef int (*_TwGetParam)(TwBar* bar, const char* varName, const char* paramName, TwParamValueType paramValueType, unsigned int outValueMaxCount, void* outValues);
+		typedef int (*_TwSetParam)(TwBar* bar, const char* varName, const char* paramName, TwParamValueType paramValueType, unsigned int inValueCount, const void* inValues);
+
+		int TwGetParam(TwBar* bar, const char* varName, const char* paramName, TwParamValueType paramValueType, unsigned int outValueMaxCount, void* outValues)
+		{
+			return reinterpret_cast<_TwGetParam>(GetProcAddress(enbmodule, "TwGetParam"))(bar, varName, paramName, paramValueType, outValueMaxCount, outValues);
+		}
+
+		int TwSetParam(TwBar* bar, const char* varName, const char* paramName, TwParamValueType paramValueType, unsigned int inValueCount, const void* inValues)
+		{
+			return reinterpret_cast<_TwSetParam>(GetProcAddress(enbmodule, "TwSetParam"))(bar, varName, paramName, paramValueType, inValueCount, inValues);
+		}
 
 	};
 
